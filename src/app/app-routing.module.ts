@@ -1,8 +1,17 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
+import { AdminModule } from './admin/admin.module';
+import { OnlyAdminGuard } from './admin/guards/only-admin.guard';
 
 
-const routes: Routes = [];
+const routes: Routes = [
+  {
+    path: 'admin',
+    loadChildren: () => AdminModule,
+    canActivate: [OnlyAdminGuard],
+    canActivateChild: [OnlyAdminGuard]
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

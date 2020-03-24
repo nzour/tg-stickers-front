@@ -1,0 +1,23 @@
+<form nz-form [formGroup]="loginForm" class="login-form" (ngSubmit)="submit()">
+  <nz-form-item>
+    <nz-form-control nzErrorTip="Обязательное поле">
+      <nz-input-group nzPrefixIcon="user">
+        <input type="text" nz-input nzSize="large" formControlName="login" placeholder="Логин"/>
+      </nz-input-group>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-control nzErrorTip="Обязательное поле!">
+      <nz-input-group nzPrefixIcon="lock">
+        <input type="password" nz-input nzSize="large" formControlName="password" placeholder="Пароль"/>
+      </nz-input-group>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-control>
+      <button [nzLoading]="loading" nz-button nzBlock nzSize="large" nzType="primary">Войти</button>
+    </nz-form-control>
+  </nz-form-item>
+</form>

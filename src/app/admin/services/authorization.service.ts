@@ -1,21 +1,21 @@
-import { RootInjectable } from '../../app.module';
 import { Observable } from 'rxjs';
 import { AdminTokenOutput } from './admin-token.service';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
 
-@RootInjectable()
+@Injectable()
 export class AuthorizationService {
 
   constructor(private http: HttpClient) {}
 
-  logIn(): Observable<AdminTokenOutput> {
-    return this.http.get<AdminTokenOutput>('login');
+  logIn(input: LogInInput): Observable<AdminTokenOutput> {
+    return this.http.post<AdminTokenOutput>('auth/login', input);
   }
 
   isLoginBusy(): Observable<boolean> {
     return this.http
-      .head<void>('login-busy')
+      .head<void>('auth/login-busy')
       .pipe(
         map(() => true)
       );

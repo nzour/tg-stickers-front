@@ -1,5 +1,26 @@
-<div nz-row>
-  <div nz-col nzSpan="24">
-    <nz-avatar nzSize="large" nzSrc="/assets/favicon.ico"></nz-avatar>
+<div nz-row class="header">
+  <div nz-col nzSpan="6">
+    <button nz-button nzType="link" nzSize="large" routerLink="/">
+      На главную
+    </button>
   </div>
+
+  <div nz-col nzOffset="12" nzSpan="6" style="padding-top: 5px">
+    <ng-template [ngIf]="isAuthorized()">
+      <button nz-button nzType="dashed" (click)="logout()">Выйти</button>
+    </ng-template>
+
+    <ng-template [ngIf]="!isAuthorized()">
+      <button nz-button nzType="link" nzSize="large" (click)="showLoginForm = true">Авторизоваться</button>
+    </ng-template>
+  </div>
+
+  <ng-template [ngIf]="!isAuthorized()">
+    <nz-drawer (nzOnClose)="showLoginForm = false"
+               [nzVisible]="showLoginForm"
+               nzTitle="Авторизация"
+               nzWidth="600">
+      <app-log-in-form></app-log-in-form>
+    </nz-drawer>
+  </ng-template>
 </div>
