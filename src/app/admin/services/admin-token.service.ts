@@ -1,22 +1,30 @@
 import { Guid } from '../../utils/types';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 const ADMIN_TOKEN_KEY = 'ADMIN_TOKEN';
 
+const tokenSubject$ = new BehaviorSubject<null | AdminTokenOutput>(null);
+
 @Injectable()
 export class AdminTokenService {
-  store(adminToken: AdminTokenOutput): void {
-    localStorage.setItem(ADMIN_TOKEN_KEY, JSON.stringify(adminToken));
+  store(tokenInfo: AdminTokenOutput): void {
+    localStorage.setItem(ADMIN_TOKEN_KEY, JSON.stringify(tokenInfo));
+    tokenSubject$.next(tokenInfo);
   }
 
-  getToken(): AdminTokenOutput | null {
-    const token = localStorage.getItem(ADMIN_TOKEN_KEY);
+  getToken(): Observable<AdminTokenOutput | null> {
+    return tokenSubject$.asObservable();
+  }
 
-    return token && JSON.parse(token);
+  hasToken(): Observable<boolean> {
+    return tokenSubject$.pipe(map(token => !!token));
   }
 
   eraseToken(): void {
     localStorage.removeItem(ADMIN_TOKEN_KEY);
+    tokenSubject$.next(null);
   }
 }
 

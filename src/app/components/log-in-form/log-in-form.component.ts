@@ -27,7 +27,7 @@ export class LogInFormComponent {
   ) { }
 
   submit(): void {
-    if (!this.loginForm.valid) {
+    if (!this.loginForm.valid || this.loading) {
       return;
     }
 

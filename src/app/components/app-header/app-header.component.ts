@@ -10,14 +10,10 @@ export class AppHeaderComponent {
 
   showLoginForm = false;
 
-  constructor(private tokenService: AdminTokenService) { }
-
-  isAuthorized(): boolean {
-    return !!this.tokenService.getToken();
-  }
+  constructor(public tokenService: AdminTokenService) { }
 
   logout(): void {
+    this.showLoginForm = false;
     this.tokenService.eraseToken();
-    location.reload(); // todo: Заменить на обзерверы.
   }
 }
