@@ -1,0 +1,22 @@
+<div nz-row>
+  <div nz-col nzOffset="8" nzSpan="8">
+    <form nz-form class="tag-form" [formGroup]="tagForm">
+      <nz-form-item>
+        <h3>Создание тэга</h3>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Обязательное поле">
+          <nz-input-group>
+            <input nz-input nzSize="large" type="text" formControlName="name" placeholder="Название тэга">
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <button (click)="submit()" [nzLoading]="loading" nz-button nzBlock nzSize="large" nzType="primary">Создать
+        </button>
+      </nz-form-item>
+    </form>
+  </div>
+</div>

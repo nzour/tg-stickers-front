@@ -6,16 +6,16 @@
   </div>
 
   <div nz-col nzOffset="12" nzSpan="6" style="padding-top: 5px">
-    <ng-template [ngIf]="tokenService.hasToken() | async">
+    <ng-template [ngIf]="tokenService.hasToken$() | async">
       <button nz-button nzType="dashed" (click)="logout()">Выйти</button>
     </ng-template>
 
-    <ng-template [ngIf]="!(tokenService.hasToken() | async)">
+    <ng-template [ngIf]="!(tokenService.hasToken$() | async)">
       <button nz-button nzType="link" nzSize="large" (click)="showLoginForm = true">Авторизоваться</button>
     </ng-template>
   </div>
 
-  <ng-template [ngIf]="!(tokenService.hasToken() | async)">
+  <ng-template [ngIf]="!(tokenService.hasToken$() | async)">
     <nz-drawer (nzOnClose)="showLoginForm = false"
                [nzVisible]="showLoginForm"
                nzTitle="Авторизация"

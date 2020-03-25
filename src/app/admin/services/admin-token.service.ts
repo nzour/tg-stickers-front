@@ -5,20 +5,27 @@ import { map } from 'rxjs/operators';
 
 const ADMIN_TOKEN_KEY = 'ADMIN_TOKEN';
 
-const tokenSubject$ = new BehaviorSubject<null | AdminTokenOutput>(null);
+const parseToken = (): AdminTokenOutput | null => {
+  const token = localStorage.getItem(ADMIN_TOKEN_KEY);
+
+  return token ? JSON.parse(token) : null;
+};
+
+const tokenSubject$ = new BehaviorSubject<null | AdminTokenOutput>(parseToken());
 
 @Injectable()
 export class AdminTokenService {
+
   store(tokenInfo: AdminTokenOutput): void {
     localStorage.setItem(ADMIN_TOKEN_KEY, JSON.stringify(tokenInfo));
     tokenSubject$.next(tokenInfo);
   }
 
-  getToken(): Observable<AdminTokenOutput | null> {
+  getToken$(): Observable<AdminTokenOutput | null> {
     return tokenSubject$.asObservable();
   }
 
-  hasToken(): Observable<boolean> {
+  hasToken$(): Observable<boolean> {
     return tokenSubject$.pipe(map(token => !!token));
   }
 

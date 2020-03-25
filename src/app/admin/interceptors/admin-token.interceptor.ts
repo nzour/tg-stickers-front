@@ -11,7 +11,7 @@ export class AdminTokenInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     this.tokenService
-      .getToken()
+      .getToken$()
       .pipe(
         filter(token => !!token)
       )

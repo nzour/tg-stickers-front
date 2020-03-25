@@ -15,3 +15,12 @@ export interface Pagination {
 export type SearchType = 'Equals' | 'Contains' | 'GreaterThan' | 'GreaterOrEquals' | 'LessThan' | 'LessOrEquals' ;
 export type SortType = 'Ascending' | 'Descending';
 
+
+export interface TagOutput {
+  id: Guid;
+  name: string;
+}
+
+export interface StickerPackOutput {
+
+}

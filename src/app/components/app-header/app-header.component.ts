@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AdminTokenService } from '../../admin/services/admin-token.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -10,10 +11,11 @@ export class AppHeaderComponent {
 
   showLoginForm = false;
 
-  constructor(public tokenService: AdminTokenService) { }
+  constructor(public tokenService: AdminTokenService, private router: Router) { }
 
-  logout(): void {
+  async logout(): Promise<void> {
     this.showLoginForm = false;
     this.tokenService.eraseToken();
+    await this.router.navigate(['/']);
   }
 }
