@@ -1,0 +1,42 @@
+<div nz-row>
+  <div nz-col nzSpan="16" nzOffset="4">
+    <nz-page-header>
+      <nz-page-header-title>Тэги</nz-page-header-title>
+
+      <nz-page-header-subtitle>
+        <nz-input-group [nzSuffix]="searchIcon">
+          <input [formControl]="nameControl" nz-input placeholder="Введите название тэга" type="text">
+        </nz-input-group>
+
+        <ng-template #searchIcon>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </nz-page-header-subtitle>
+
+      <nz-page-header-subtitle>
+        <label [formControl]="strongSearchControl" nz-checkbox nz-tooltip
+               nzTooltipTitle="Чекнут - строгий поиск по названию, иначе - по вхождению"></label>
+      </nz-page-header-subtitle>
+
+      <nz-page-header-subtitle *ngIf="tagService.loading$ | async">
+        <nz-spin nzSimple></nz-spin>
+      </nz-page-header-subtitle>
+
+      <nz-page-header-extra>
+        Всего тэгов:
+        <nz-badge [nzCount]="tagService.total$ | async" nzShowZero></nz-badge>
+      </nz-page-header-extra>
+
+      <nz-page-header-content>
+        <nz-tag (nzCheckedChange)="checkTag(tag.id, $event)"
+                *ngFor="let tag of tagService.tags$ | async"
+                [nzChecked]="isTagChecked(tag.id)"
+                nzColor="blue"
+                nzMode="checkable">
+          {{ tag.name }}
+        </nz-tag>
+      </nz-page-header-content>
+
+    </nz-page-header>
+  </div>
+</div>

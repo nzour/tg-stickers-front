@@ -3,7 +3,7 @@ import { AdminOutput, Guid, PaginatedData, Pagination, SearchType, SortType, Tim
 import { TagOutput } from './tag.service';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 
 
 let _state: StickerPackState = {
@@ -22,11 +22,11 @@ let _state: StickerPackState = {
 export class StickerPackService {
   private store$ = new BehaviorSubject<StickerPackState>(_state);
 
-  _filters$ = this.store$.pipe(map(state => state.filters));
-  _sorting$ = this.store$.pipe(map(state => state.sorting));
-  _pagination$ = this.store$.pipe(map(state => state.pagination));
-  _total$ = this.store$.pipe(map(state => state.total));
-  _stickerPacks$ = this.store$.pipe(map(state => state.stickerPacks));
+  _filters$ = this.store$.pipe(map(state => state.filters), distinctUntilChanged());
+  _sorting$ = this.store$.pipe(map(state => state.sorting), distinctUntilChanged());
+  _pagination$ = this.store$.pipe(map(state => state.pagination), distinctUntilChanged());
+  _total$ = this.store$.pipe(map(state => state.total), distinctUntilChanged());
+  _stickerPacks$ = this.store$.pipe(map(state => state.stickerPacks), distinctUntilChanged());
 
   constructor(private http: HttpClient) {
     combineLatest([this._filters$, this._sorting$, this._pagination$])

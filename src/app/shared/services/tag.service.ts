@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { Guid, PaginatedData, Pagination, SearchType } from '../types';
-import { map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, finalize, map, switchMap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 
 let _state: TagState = {
@@ -15,17 +15,21 @@ let _state: TagState = {
 export class TagService {
   private store$ = new BehaviorSubject<TagState>(_state);
 
-  total$ = this.store$.pipe(map(state => state.total));
-  tags$ = this.store$.pipe(map(state => state.tags));
-  pagination$ = this.store$.pipe(map(state => state.pagination));
-  filter$ = this.store$.pipe(map(state => state.filter));
+  total$ = this.store$.pipe(map(state => state.total), distinctUntilChanged());
+  tags$ = this.store$.pipe(map(state => state.tags), distinctUntilChanged());
+  pagination$ = this.store$.pipe(map(state => state.pagination), distinctUntilChanged());
+  filter$ = this.store$.pipe(map(state => state.filter), distinctUntilChanged());
+
+  loading$ = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient) {
     combineLatest([this.filter$, this.pagination$])
       .pipe(
         switchMap(([filter, pagination]) => this.getAllTags(filter, pagination))
       )
-      .subscribe(output => _state = { ..._state, total: output.total, tags: output.data });
+      .subscribe(output => {
+        this.store$.next(_state = { ..._state, total: output.total, tags: output.data });
+      });
   }
 
   setPagination(pagination: Pagination): void {
@@ -37,6 +41,8 @@ export class TagService {
   }
 
   getAllTags(tagNameFilter: TagNameFilter, pagination: Pagination): Observable<PaginatedData<TagOutput>> {
+    this.loading$.next(true);
+
     const fromObject = {
       ...tagNameFilter,
       limit: String(pagination.limit),
@@ -45,7 +51,8 @@ export class TagService {
 
     const params = new HttpParams({ fromObject });
 
-    return this.http.get<PaginatedData<TagOutput>>('tags', { params });
+    return this.http.get<PaginatedData<TagOutput>>('tags', { params })
+      .pipe(finalize(() => this.loading$.next(false)));
   }
 
   createTag(name: string): Observable<TagOutput> {

@@ -8,6 +8,8 @@ import { AdminModule } from './admin/admin.module';
 import { LogInFormComponent } from './components/log-in-form/log-in-form.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SharedModule } from './shared/shared.module';
+import { MainComponent } from './components/main/main.component';
+import { TagsPageComponent } from './components/tags-page/tags-page.component';
 
 
 @NgModule({
@@ -15,7 +17,9 @@ import { SharedModule } from './shared/shared.module';
   declarations: [
     AppComponent,
     AppHeaderComponent,
-    LogInFormComponent
+    LogInFormComponent,
+    MainComponent,
+    TagsPageComponent
   ],
   imports: [
     BrowserModule,
