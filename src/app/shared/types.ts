@@ -13,3 +13,10 @@ export interface Pagination {
   limit: number | null;
   offset: number | null;
 }
+
+export interface AdminOutput {
+  id: Guid,
+  name: string,
+  login: string,
+  createdAt: Timestamp
+}
