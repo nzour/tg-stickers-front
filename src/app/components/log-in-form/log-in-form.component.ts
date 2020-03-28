@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AdminTokenService } from '../../admin/services/admin-token.service';
+import { AdminTokenService } from '../../shared/services/admin-token.service';
 import { AuthorizationService } from '../../admin/services/authorization.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';

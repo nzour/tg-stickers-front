@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AdminTokenService } from '../../admin/services/admin-token.service';
+import { AdminTokenService } from '../../shared/services/admin-token.service';
 import { Router } from '@angular/router';
 
 @Component({

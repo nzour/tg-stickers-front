@@ -1,4 +1,4 @@
-import { Guid } from '../../utils/types';
+import { Guid } from '../types';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -23,6 +23,10 @@ export class AdminTokenService {
 
   getToken$(): Observable<AdminTokenOutput | null> {
     return tokenSubject$.asObservable();
+  }
+
+  getToken(): AdminTokenOutput | null {
+    return tokenSubject$.getValue();
   }
 
   hasToken$(): Observable<boolean> {

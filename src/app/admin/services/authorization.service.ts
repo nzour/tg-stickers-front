@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { AdminTokenOutput } from './admin-token.service';
+import { AdminTokenOutput } from '../../shared/services/admin-token.service';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';

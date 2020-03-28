@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { TagService as AdminTagService } from '../../services/tag.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { NzMessageService } from 'ng-zorro-antd';
 import { Router } from '@angular/router';
+import { TagService } from '../../../shared/services/tag.service';
 
 @Component({
   selector: 'app-create-tag',
@@ -20,7 +20,7 @@ export class CreateTagComponent {
   });
 
   constructor(
-    private tagService: AdminTagService,
+    private tagService: TagService,
     private nzMessageService: NzMessageService,
     private router: Router
   ) { }
