@@ -22,11 +22,11 @@ let _state: StickerPackState = {
 export class StickerPackService {
   private store$ = new BehaviorSubject<StickerPackState>(_state);
 
-  private _filters$ = this.store$.pipe(map(state => state.filters));
-  private _sorting$ = this.store$.pipe(map(state => state.sorting));
-  private _pagination$ = this.store$.pipe(map(state => state.pagination));
-  private _total$ = this.store$.pipe(map(state => state.total));
-  private _stickerPacks$ = this.store$.pipe(map(state => state.stickerPacks));
+  _filters$ = this.store$.pipe(map(state => state.filters));
+  _sorting$ = this.store$.pipe(map(state => state.sorting));
+  _pagination$ = this.store$.pipe(map(state => state.pagination));
+  _total$ = this.store$.pipe(map(state => state.total));
+  _stickerPacks$ = this.store$.pipe(map(state => state.stickerPacks));
 
   constructor(private http: HttpClient) {
     combineLatest([this._filters$, this._sorting$, this._pagination$])
@@ -38,14 +38,6 @@ export class StickerPackService {
       .subscribe(output => {
         this.store$.next(_state = { ..._state, total: output.total, stickerPacks: output.data });
       });
-  }
-
-  get total$(): Observable<number> {
-    return this._total$;
-  }
-
-  get stickerPacks$(): Observable<StickerPackOutput[]> {
-    return this._stickerPacks$;
   }
 
   increaseClapsAndRefreshStickers(stickerPackId: Guid, clapsToAdd: number): void {
