@@ -12,7 +12,7 @@ export class ApiInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     request = request.clone({
       url: `${environment.apiUrl}/${request.url}`,
-      setHeaders: { Authorization: `Bearer ${this.tokenService.getToken()}` }
+      setHeaders: { Authorization: `Bearer ${this.tokenService.getToken()?.accessToken}` }
     });
 
     return next.handle(request);
