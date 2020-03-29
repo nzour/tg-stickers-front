@@ -21,10 +21,8 @@ export class TagsPageComponent {
 
   constructor(public tagService: TagService) {
     // todo: реализовать пагинацию
-    // todo: пофиксить проблему с прочекиванием тэгов
-    // todo: решить нужен ли автокомплит
     this.nameControl.valueChanges
-      .pipe(debounceTime(700))
+      .pipe(debounceTime(400))
       .subscribe(name => {
         const searchType = this.mapSearchType(this.strongSearchControl.value);
         this.tagService.setFilter({ name, searchType });

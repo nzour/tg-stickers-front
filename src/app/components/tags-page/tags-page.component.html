@@ -31,10 +31,14 @@
         <nz-tag (nzCheckedChange)="checkTag(tag.id, $event)"
                 *ngFor="let tag of tagService.tags$ | async"
                 [nzChecked]="isTagChecked(tag.id)"
-                nzColor="blue"
-                nzMode="checkable">
+                nzMode="checkable"
+                style="border: 1px solid blue">
           {{ tag.name }}
         </nz-tag>
+
+        <ng-template [ngIf]="!(tagService.loading$ | async)  && !(tagService.total$ | async)">
+          <h3>Ничего не найдено</h3>
+        </ng-template>
       </nz-page-header-content>
 
       <nz-page-header-footer *appIfAdmin>
