@@ -7,6 +7,7 @@ import { TagService } from './services/tag.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { RouterModule } from '@angular/router';
+import { IfAdminDirective } from './directives/if-admin.directive';
 
 
 const services = [
@@ -25,9 +26,12 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [],
+  declarations: [IfAdminDirective],
   imports: modules,
-  exports: modules,
+  exports: [
+    modules,
+    IfAdminDirective
+  ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
