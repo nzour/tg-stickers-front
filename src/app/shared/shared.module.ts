@@ -8,11 +8,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { RouterModule } from '@angular/router';
 import { IfAdminDirective } from './directives/if-admin.directive';
+import { StickerPackService } from './services/sticker-pack.service';
 
 
 const services = [
   AdminTokenService,
-  TagService
+  TagService,
+  StickerPackService
 ];
 
 const modules = [

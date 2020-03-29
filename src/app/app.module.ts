@@ -10,6 +10,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SharedModule } from './shared/shared.module';
 import { MainComponent } from './components/main/main.component';
 import { TagsPageComponent } from './components/tags-page/tags-page.component';
+import { StickerPacksPageComponent } from './components/sticker-packs-page/sticker-packs-page.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
@@ -19,14 +21,16 @@ import { TagsPageComponent } from './components/tags-page/tags-page.component';
     AppHeaderComponent,
     LogInFormComponent,
     MainComponent,
-    TagsPageComponent
+    TagsPageComponent,
+    StickerPacksPageComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
     AdminModule,
-    SharedModule
+    SharedModule,
+    FontAwesomeModule
   ]
 })
 export class AppModule {

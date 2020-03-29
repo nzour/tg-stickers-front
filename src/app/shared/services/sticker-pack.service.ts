@@ -3,7 +3,7 @@ import { AdminOutput, Guid, PaginatedData, Pagination, SearchType, SortType, Tim
 import { TagOutput } from './tag.service';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, finalize, map, switchMap } from 'rxjs/operators';
 
 
 let _state: StickerPackState = {
@@ -22,14 +22,16 @@ let _state: StickerPackState = {
 export class StickerPackService {
   private store$ = new BehaviorSubject<StickerPackState>(_state);
 
-  _filters$ = this.store$.pipe(map(state => state.filters), distinctUntilChanged());
-  _sorting$ = this.store$.pipe(map(state => state.sorting), distinctUntilChanged());
-  _pagination$ = this.store$.pipe(map(state => state.pagination), distinctUntilChanged());
-  _total$ = this.store$.pipe(map(state => state.total), distinctUntilChanged());
-  _stickerPacks$ = this.store$.pipe(map(state => state.stickerPacks), distinctUntilChanged());
+  filters$ = this.store$.pipe(map(state => state.filters), distinctUntilChanged());
+  sorting$ = this.store$.pipe(map(state => state.sorting), distinctUntilChanged());
+  pagination$ = this.store$.pipe(map(state => state.pagination), distinctUntilChanged());
+  total$ = this.store$.pipe(map(state => state.total), distinctUntilChanged());
+  stickerPacks$ = this.store$.pipe(map(state => state.stickerPacks), distinctUntilChanged());
+
+  loading$ = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient) {
-    combineLatest([this._filters$, this._sorting$, this._pagination$])
+    combineLatest([this.filters$, this.sorting$, this.pagination$])
       .pipe(
         switchMap(([filters, sorting, pagination]) => {
           return this.getAllStickerPacks$(filters, sorting, pagination);
@@ -62,8 +64,12 @@ export class StickerPackService {
     sorting: StickerPackSorting,
     pagination: Pagination
   ): Observable<PaginatedData<StickerPackOutput>> {
+    this.loading$.next(true);
+
     const queryParams = StickerPackService.filtersToQueryParams(filters, sorting, pagination);
-    return this.http.get<PaginatedData<StickerPackOutput>>(`stickerPacks${queryParams}`);
+    return this.http
+      .get<PaginatedData<StickerPackOutput>>(`stickers${queryParams}`)
+      .pipe(finalize(() => this.loading$.next(false)));
   }
 
   private static filtersToQueryParams(
