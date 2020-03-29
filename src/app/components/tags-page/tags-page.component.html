@@ -32,7 +32,7 @@
                 *ngFor="let tag of tagService.tags$ | async"
                 [nzChecked]="isTagChecked(tag.id)"
                 nzMode="checkable"
-                style="border: 1px solid blue">
+                style="border: 1px solid blue; user-select: none">
           {{ tag.name }}
         </nz-tag>
 
