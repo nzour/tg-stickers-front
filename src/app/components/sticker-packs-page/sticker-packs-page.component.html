@@ -1,10 +1,16 @@
 <div nz-row>
   <div nz-col nzOffset="2" nzSpan="20">
     <nz-page-header>
+      <nz-page-header-title>Стикер паки</nz-page-header-title>
+
       <nz-page-header-extra>
-        Всего стикерпаков:
+        Всего стикер паков:
         <nz-badge [nzCount]="stickerPackService.total$ | async" nzShowZero></nz-badge>
       </nz-page-header-extra>
+
+      <nz-page-header-footer *appIfAdmin>
+        <button nz-button nzType="default" routerLink="admin/stickers">Создать новый стикер пак</button>
+      </nz-page-header-footer>
     </nz-page-header>
 
     <div style="padding:30px;">

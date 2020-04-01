@@ -1,0 +1,65 @@
+<div nz-row>
+  <div nz-col nzOffset="8" nzSpan="8">
+    <form nz-form class="sticker-pack-form" [formGroup]="stickerPackForm">
+      <nz-form-item>
+        <h3>Создание стикер пака</h3>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Обязательное поле">
+          <nz-input-group>
+            <input
+              nz-input
+              nzSize="large"
+              type="text"
+              formControlName="name"
+              placeholder="Название стикерпака"/>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Должен быть валидный url путь до стикер пака">
+          <nz-input-group>
+            <input
+              nz-input
+              nzSize="large"
+              type="text"
+              formControlName="sharedUrl"
+              placeholder="Ссылка на стикерпак"/>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-control>
+          <nz-input-group>
+            <nz-select
+              *ngIf="tags.length && !tagsLoading"
+              nzSize="large"
+              nzPlaceHolder="Тэги"
+              nzMode="multiple"
+              style="width: 100%">
+
+              <nz-option
+                *ngFor="let tag of tags"
+                [nzLabel]="tag.name"
+                [nzValue]="tag.name">
+              </nz-option>
+            </nz-select>
+
+            <div *ngIf="tagsLoading" style="text-align: center;">
+              <nz-spin nzSimple></nz-spin>
+            </div>
+
+            <nz-empty *ngIf="!tags.length && !tagsLoading" nzNotFoundContent="Не найдено тэгов"></nz-empty>
+          </nz-input-group>
+        </nz-form-control>
+
+        <button (click)="submit()" [nzLoading]="loading" nz-button nzBlock nzSize="large" nzType="primary">Создать
+        </button>
+      </nz-form-item>
+
+    </form>
+  </div>
+</div>

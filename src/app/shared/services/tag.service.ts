@@ -25,7 +25,7 @@ export class TagService {
   constructor(private http: HttpClient) {
     combineLatest([this.filter$, this.pagination$])
       .pipe(
-        switchMap(([filter, pagination]) => this.getAllTags(filter, pagination))
+        switchMap(([filter, pagination]) => this.getAllTags$(filter, pagination))
       )
       .subscribe(output => {
         this.store$.next(_state = { ..._state, total: output.total, tags: output.data });
@@ -40,7 +40,7 @@ export class TagService {
     this.store$.next(_state = { ..._state, filter });
   }
 
-  getAllTags(tagNameFilter: TagNameFilter, pagination: Pagination): Observable<PaginatedData<TagOutput>> {
+  getAllTags$(tagNameFilter: TagNameFilter, pagination: Pagination): Observable<PaginatedData<TagOutput>> {
     this.loading$.next(true);
 
     const fromObject = {

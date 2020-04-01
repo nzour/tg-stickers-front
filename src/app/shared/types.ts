@@ -20,3 +20,12 @@ export interface AdminOutput {
   login: string,
   createdAt: Timestamp
 }
+
+export interface HandledError {
+  errorType: string,
+  message: string
+}
+
+export function isHandledError(object: any): object is HandledError {
+  return 'errorType' in object && 'message' in object;
+}
