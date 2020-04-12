@@ -5,6 +5,7 @@ import { CreateStickerPackComponent } from './components/create-sticker-pack/cre
 import { CreateTagComponent } from './components/create-tag/create-tag.component';
 import { OnlyAdminGuard } from './guards/only-admin.guard';
 import { AuthorizationService } from './services/authorization.service';
+import { ValidateAdminTokenGuard } from './guards/validate-admin-token.guard';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { AuthorizationService } from './services/authorization.service';
   ],
   providers: [
     AuthorizationService,
-    OnlyAdminGuard
+    OnlyAdminGuard,
+    ValidateAdminTokenGuard
   ]
 })
 export class AdminModule {
