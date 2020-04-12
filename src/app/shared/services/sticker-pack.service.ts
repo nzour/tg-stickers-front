@@ -3,7 +3,7 @@ import { AdminOutput, Guid, PaginatedData, Pagination, SearchType, SortType, Tim
 import { TagOutput } from './tag.service';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { distinctUntilChanged, finalize, pluck, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, finalize, map, switchMap } from 'rxjs/operators';
 
 
 const _initialState: StickerPackState = {
@@ -23,11 +23,11 @@ export class StickerPackService {
   private store$ = new BehaviorSubject<StickerPackState>(_initialState);
   private refreshSubject$ = new Subject();
 
-  filters$ = this.store$.pipe(pluck('filters'), distinctUntilChanged());
-  sorting$ = this.store$.pipe(pluck('sorting'), distinctUntilChanged());
-  pagination$ = this.store$.pipe(pluck('pagination'), distinctUntilChanged());
-  total$ = this.store$.pipe(pluck('total'), distinctUntilChanged());
-  stickerPacks$ = this.store$.pipe(pluck('stickerPacks'), distinctUntilChanged());
+  filters$ = this.store$.pipe(map(s => s.filters), distinctUntilChanged());
+  sorting$ = this.store$.pipe(map(s => s.sorting), distinctUntilChanged());
+  pagination$ = this.store$.pipe(map(s => s.pagination), distinctUntilChanged());
+  total$ = this.store$.pipe(map(s => s.total), distinctUntilChanged());
+  stickerPacks$ = this.store$.pipe(map(s => s.stickerPacks), distinctUntilChanged());
 
   loading$ = new BehaviorSubject<boolean>(false);
 

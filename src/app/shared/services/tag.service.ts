@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { Guid, PaginatedData, Pagination, SearchType } from '../types';
-import { distinctUntilChanged, finalize, map, pluck, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, finalize, map, switchMap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 
 const _initialState: TagState = {
@@ -16,10 +16,10 @@ export class TagService {
   private store$ = new BehaviorSubject<TagState>(_initialState);
   private refreshSubject$ = new Subject();
 
-  total$ = this.store$.pipe(pluck('total'), distinctUntilChanged());
-  tags$ = this.store$.pipe(pluck('tags'), distinctUntilChanged());
-  pagination$ = this.store$.pipe(pluck('pagination'), distinctUntilChanged());
-  filter$ = this.store$.pipe(pluck('filter'), distinctUntilChanged());
+  total$ = this.store$.pipe(map(s => s.total), distinctUntilChanged());
+  tags$ = this.store$.pipe(map(s => s.tags), distinctUntilChanged());
+  pagination$ = this.store$.pipe(map(s => s.pagination), distinctUntilChanged());
+  filter$ = this.store$.pipe(map(s => s.filter), distinctUntilChanged());
 
   loading$ = new BehaviorSubject<boolean>(false);
 
