@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd';
 import { catchError, finalize } from 'rxjs/operators';
 import { TagOutput, TagService } from 'src/app/shared/services/tag.service';
-import { AdminStickerPackService } from '../../services/admin-sticker-pack.service';
 import { isHandledError } from 'src/app/shared/types';
+import { StickerPackService } from '../../../shared/services/sticker-pack.service';
 
 const URL_REGEX_PATTERN = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm;
 
@@ -29,7 +29,7 @@ export class CreateStickerPackComponent implements OnInit {
   });
 
   constructor(
-    private stickerPackService: AdminStickerPackService,
+    private stickerPackService: StickerPackService,
     private tagService: TagService,
     private messageService: NzMessageService,
     private router: Router

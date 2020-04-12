@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { AdminOutput, Guid, PaginatedData, Pagination, SearchType, SortType, Timestamp } from '../types';
 import { TagOutput } from './tag.service';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { distinctUntilChanged, finalize, map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, finalize, pluck, switchMap } from 'rxjs/operators';
 
 
-let _state: StickerPackState = {
+const _initialState: StickerPackState = {
   total: 0,
   stickerPacks: Array<StickerPackOutput>(),
   pagination: { limit: 20, offset: 0 },
@@ -20,43 +20,53 @@ let _state: StickerPackState = {
 
 @Injectable()
 export class StickerPackService {
-  private store$ = new BehaviorSubject<StickerPackState>(_state);
+  private store$ = new BehaviorSubject<StickerPackState>(_initialState);
+  private refreshSubject$ = new Subject();
 
-  filters$ = this.store$.pipe(map(state => state.filters), distinctUntilChanged());
-  sorting$ = this.store$.pipe(map(state => state.sorting), distinctUntilChanged());
-  pagination$ = this.store$.pipe(map(state => state.pagination), distinctUntilChanged());
-  total$ = this.store$.pipe(map(state => state.total), distinctUntilChanged());
-  stickerPacks$ = this.store$.pipe(map(state => state.stickerPacks), distinctUntilChanged());
+  filters$ = this.store$.pipe(pluck('filters'), distinctUntilChanged());
+  sorting$ = this.store$.pipe(pluck('sorting'), distinctUntilChanged());
+  pagination$ = this.store$.pipe(pluck('pagination'), distinctUntilChanged());
+  total$ = this.store$.pipe(pluck('total'), distinctUntilChanged());
+  stickerPacks$ = this.store$.pipe(pluck('stickerPacks'), distinctUntilChanged());
 
   loading$ = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient) {
-    combineLatest([this.filters$, this.sorting$, this.pagination$])
+    combineLatest([this.filters$, this.sorting$, this.pagination$, this.refreshSubject$])
       .pipe(
         switchMap(([filters, sorting, pagination]) => {
           return this.getAllStickerPacks$(filters, sorting, pagination);
         })
       )
       .subscribe(output => {
-        this.store$.next(_state = { ..._state, total: output.total, stickerPacks: output.data });
+        this.store$.next({ ...this.store$.value, total: output.total, stickerPacks: output.data });
       });
+  }
+
+  createStickerPack$(input: StickerPackInput): Observable<StickerPackOutput> {
+    return this.http.post<StickerPackOutput>('stickers', input)
+      .pipe(finalize(this.refreshStickers));
   }
 
   increaseClapsAndRefreshStickers(stickerPackId: Guid, clapsToAdd: number): void {
     this.http.post(`stickers${stickerPackId}`, { clapsToAdd })
-      .subscribe(() => this.setPagination(_state.pagination));
+      .subscribe(this.refreshStickers);
   }
 
   setFilters(filters: StickerPackFilters): void {
-    this.store$.next(_state = { ..._state, filters });
+    this.store$.next({ ...this.store$.value, filters });
   }
 
   setSorting(sorting: StickerPackSorting): void {
-    this.store$.next(_state = { ..._state, sorting });
+    this.store$.next({ ...this.store$.value, sorting });
   }
 
   setPagination(pagination: Pagination): void {
-    this.store$.next(_state = { ..._state, pagination });
+    this.store$.next({ ...this.store$.value, pagination });
+  }
+
+  refreshStickers(): void {
+    this.refreshSubject$.next();
   }
 
   private getAllStickerPacks$(
@@ -67,6 +77,7 @@ export class StickerPackService {
     this.loading$.next(true);
 
     const queryParams = StickerPackService.filtersToQueryParams(filters, sorting, pagination);
+
     return this.http
       .get<PaginatedData<StickerPackOutput>>(`stickers${queryParams}`)
       .pipe(finalize(() => this.loading$.next(false)));
@@ -149,4 +160,10 @@ export type StickerPackSortableFields = 'createdAt' | 'donationCount' | 'clapsCo
 export interface StickerPackSorting {
   sortBy: StickerPackSortableFields,
   sortType: SortType
+}
+
+export interface StickerPackInput {
+  name: string,
+  sharedUrl: string,
+  tagIds: Guid[]
 }

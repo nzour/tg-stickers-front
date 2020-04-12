@@ -13,6 +13,7 @@ export class StickerPacksPageComponent implements OnInit {
   constructor(public stickerPackService: StickerPackService) { }
 
   ngOnInit(): void {
+    this.stickerPackService.refreshStickers();
   }
 
   get faThumbsUp() {

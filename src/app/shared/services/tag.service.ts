@@ -1,10 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { Guid, PaginatedData, Pagination, SearchType } from '../types';
-import { distinctUntilChanged, finalize, map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, finalize, map, pluck, switchMap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 
-let _state: TagState = {
+const _initialState: TagState = {
   total: 0,
   tags: [],
   pagination: { limit: 20, offset: 0 },
@@ -13,31 +13,32 @@ let _state: TagState = {
 
 @Injectable()
 export class TagService {
-  private store$ = new BehaviorSubject<TagState>(_state);
+  private store$ = new BehaviorSubject<TagState>(_initialState);
+  private refreshSubject$ = new Subject();
 
-  total$ = this.store$.pipe(map(state => state.total), distinctUntilChanged());
-  tags$ = this.store$.pipe(map(state => state.tags), distinctUntilChanged());
-  pagination$ = this.store$.pipe(map(state => state.pagination), distinctUntilChanged());
-  filter$ = this.store$.pipe(map(state => state.filter), distinctUntilChanged());
+  total$ = this.store$.pipe(pluck('total'), distinctUntilChanged());
+  tags$ = this.store$.pipe(pluck('tags'), distinctUntilChanged());
+  pagination$ = this.store$.pipe(pluck('pagination'), distinctUntilChanged());
+  filter$ = this.store$.pipe(pluck('filter'), distinctUntilChanged());
 
   loading$ = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient) {
-    combineLatest([this.filter$, this.pagination$])
+    combineLatest([this.filter$, this.pagination$, this.refreshSubject$])
       .pipe(
         switchMap(([filter, pagination]) => this.getAllTags$(filter, pagination))
       )
       .subscribe(output => {
-        this.store$.next(_state = { ..._state, total: output.total, tags: output.data });
+        this.store$.next({ ...this.store$.value, total: output.total, tags: output.data });
       });
   }
 
   setPagination(pagination: Pagination): void {
-    this.store$.next(_state = { ..._state, pagination });
+    this.store$.next({ ...this.store$.value, pagination });
   }
 
   setFilter(filter: TagNameFilter): void {
-    this.store$.next(_state = { ..._state, filter });
+    this.store$.next({ ...this.store$.value, filter });
   }
 
   getAllTags$(tagNameFilter: TagNameFilter, pagination: Pagination): Observable<PaginatedData<TagOutput>> {
@@ -56,11 +57,17 @@ export class TagService {
   }
 
   createTag(name: string): Observable<TagOutput> {
-    return this.http.post<TagOutput>(`tags`, { name });
+    return this.http.post<TagOutput>(`tags`, { name })
+      .pipe(finalize(this.refreshTags));
   }
 
   updateTag(tagId: Guid, name: string): Observable<TagOutput> {
-    return this.http.put<TagOutput>(`tags/${tagId}`, { name });
+    return this.http.put<TagOutput>(`tags/${tagId}`, { name })
+      .pipe(finalize(this.refreshTags));
+  }
+
+  refreshTags(): void {
+    this.refreshSubject$.next();
   }
 
   isTagNameBusy(name: string): Observable<boolean> {

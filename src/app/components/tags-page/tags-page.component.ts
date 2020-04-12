@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { TagService } from '../../shared/services/tag.service';
 import { FormControl } from '@angular/forms';
 import { debounceTime, filter, map } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { Guid, SearchType } from '../../shared/types';
   styleUrls: ['./tags-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TagsPageComponent {
+export class TagsPageComponent implements OnInit {
 
   nameControl = new FormControl('');
   strongSearchControl = new FormControl(false);
@@ -36,6 +36,10 @@ export class TagsPageComponent {
       .subscribe(searchType =>
         this.tagService.setFilter({ searchType, name: this.nameControl.value })
       );
+  }
+
+  ngOnInit(): void {
+    this.tagService.refreshTags();
   }
 
   isTagChecked(tagId: Guid): boolean {

@@ -3,6 +3,7 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AdminTokenService } from './services/admin-token.service';
+import { catchError } from 'rxjs/operators';
 
 @Injectable()
 export class ApiInterceptor implements HttpInterceptor {
@@ -15,6 +16,13 @@ export class ApiInterceptor implements HttpInterceptor {
       setHeaders: { Authorization: `Bearer ${this.tokenService.getToken()?.accessToken}` }
     });
 
-    return next.handle(request);
+    return next.handle(request)
+      .pipe(
+        catchError(httpError => {
+          'status' in httpError && httpError.status === 401 && this.tokenService.eraseToken();
+
+          throw httpError;
+        })
+      );
   }
 }

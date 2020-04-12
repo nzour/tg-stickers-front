@@ -21,16 +21,12 @@ export class AdminTokenService {
     tokenSubject$.next(tokenInfo);
   }
 
-  getToken$(): Observable<AdminTokenOutput | null> {
-    return tokenSubject$.asObservable();
-  }
-
   getToken(): AdminTokenOutput | null {
     return tokenSubject$.getValue();
   }
 
   hasToken$(): Observable<boolean> {
-    return tokenSubject$.pipe(map(token => !!token));
+    return tokenSubject$.pipe(map(Boolean));
   }
 
   eraseToken(): void {
