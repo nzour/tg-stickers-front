@@ -18,8 +18,6 @@ const URL_REGEX_PATTERN = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?
 export class CreateStickerPackComponent implements OnInit {
 
   tags = Array<TagOutput>();
-  tagsLoading = true;
-
   loading = false;
 
   stickerPackForm = new FormGroup({
@@ -29,19 +27,14 @@ export class CreateStickerPackComponent implements OnInit {
   });
 
   constructor(
+    public tagService: TagService,
     private stickerPackService: StickerPackService,
-    private tagService: TagService,
     private messageService: NzMessageService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
-    this.tagService
-      .getAllTags$({ name: '', searchType: 'Equals' }, { limit: 100, offset: 0 })
-      .pipe(
-        finalize(() => this.tagsLoading = false)
-      )
-      .subscribe(tags => this.tags = tags.data);
+    this.tagService.refreshTags();
   }
 
   submit(): void {

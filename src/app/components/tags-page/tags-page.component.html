@@ -4,22 +4,14 @@
       <nz-page-header-title>Тэги</nz-page-header-title>
 
       <nz-page-header-subtitle>
-        <nz-input-group [nzSuffix]="searchIcon">
-          <input [formControl]="nameControl" nz-input placeholder="Введите название тэга" type="text">
-        </nz-input-group>
-
-        <ng-template #searchIcon>
-          <i nz-icon nzType="search"></i>
-        </ng-template>
-      </nz-page-header-subtitle>
-
-      <nz-page-header-subtitle>
-        <label [formControl]="strongSearchControl" nz-checkbox nz-tooltip
-               nzTooltipTitle="Чекнут - строгий поиск по названию, иначе - по вхождению"></label>
-      </nz-page-header-subtitle>
-
-      <nz-page-header-subtitle *ngIf="tagService.loading$ | async">
-        <nz-spin nzSimple></nz-spin>
+        <button
+          (click)="tagService.refreshTags()"
+          [nzLoading]="tagService.loading$ | async"
+          nz-button
+          nzShape="circle"
+          nzSize="small">
+          <i nz-icon nzType="reload" nzTheme="outline"></i>
+        </button>
       </nz-page-header-subtitle>
 
       <nz-page-header-extra>
@@ -28,21 +20,26 @@
       </nz-page-header-extra>
 
       <nz-page-header-content>
-        <nz-tag (nzCheckedChange)="checkTag(tag.id, $event)"
-                *ngFor="let tag of tagService.tags$ | async"
-                [nzChecked]="isTagChecked(tag.id)"
-                nzMode="checkable"
-                style="border: 1px solid blue; user-select: none; cursor: pointer;">
-          {{ tag.name }}
-        </nz-tag>
+        <nz-input-group *ngIf="(tagService.total$ | async) || (tagService.loading$ | async)">
+          <nz-select
+            nzPlaceHolder="Тэги"
+            nzMode="multiple"
+            [nzLoading]="tagService.loading$ | async"
+            [formControl]="selectedTagsControl"
+            style="width: 100%">
 
-        <ng-template [ngIf]="!(tagService.loading$ | async)  && !(tagService.total$ | async)">
+            <nz-option *ngFor="let tag of tagService.tags$ | async" [nzLabel]="tag.name" [nzValue]="tag.id"></nz-option>
+
+          </nz-select>
+        </nz-input-group>
+
+        <ng-template [ngIf]="!(tagService.loading$ | async) && !(tagService.total$ | async)">
           <h3>Ничего не найдено</h3>
         </ng-template>
       </nz-page-header-content>
 
       <nz-page-header-footer *appIfAdmin>
-        <button nz-button nzType="default" routerLink="admin/tags">Создать новый тэг</button>
+        <button nz-button nzType="default" routerLink="admin/tags">Добавить тэг</button>
       </nz-page-header-footer>
 
     </nz-page-header>

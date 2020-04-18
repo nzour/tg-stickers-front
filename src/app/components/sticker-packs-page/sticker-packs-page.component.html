@@ -3,13 +3,23 @@
     <nz-page-header>
       <nz-page-header-title>Стикер паки</nz-page-header-title>
 
+      <nz-page-header-subtitle>
+        <button (click)="stickerPackService.refreshStickers()"
+                [nzLoading]="stickerPackService.loading$ | async"
+                nz-button
+                nzShape="circle"
+                nzSize="small">
+          <i nz-icon nzType="reload" nzTheme="outline"></i>
+        </button>
+      </nz-page-header-subtitle>
+
       <nz-page-header-extra>
         Всего стикер паков:
         <nz-badge [nzCount]="stickerPackService.total$ | async" nzShowZero></nz-badge>
       </nz-page-header-extra>
 
       <nz-page-header-footer *appIfAdmin>
-        <button nz-button nzType="default" routerLink="admin/stickers">Создать новый стикер пак</button>
+        <button nz-button nzType="default" routerLink="admin/stickers">Добавить стикер пак</button>
       </nz-page-header-footer>
     </nz-page-header>
 

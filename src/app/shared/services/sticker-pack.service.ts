@@ -3,7 +3,7 @@ import { AdminOutput, Guid, PaginatedData, Pagination, SearchType, SortType, Tim
 import { TagOutput } from './tag.service';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { distinctUntilChanged, finalize, map, switchMap } from 'rxjs/operators';
+import { delay, distinctUntilChanged, finalize, map, switchMap } from 'rxjs/operators';
 
 
 const _initialState: StickerPackState = {
@@ -14,7 +14,7 @@ const _initialState: StickerPackState = {
   filters: {
     nameFilter: { name: '', nameSearchType: 'Equals' },
     clapsFilter: { clapsCount: undefined, clapsSearchType: 'Equals' },
-    tagsFilter: { tagsIds: [] }
+    tagsFilter: { tagIds: [] }
   }
 };
 
@@ -35,7 +35,7 @@ export class StickerPackService {
     combineLatest([this.filters$, this.sorting$, this.pagination$, this.refreshSubject$])
       .pipe(
         switchMap(([filters, sorting, pagination]) => {
-          return this.getAllStickerPacks$(filters, sorting, pagination);
+          return this.getStickerPacks$(filters, sorting, pagination);
         })
       )
       .subscribe(output => {
@@ -54,7 +54,7 @@ export class StickerPackService {
   }
 
   setFilters(filters: StickerPackFilters): void {
-    this.store$.next({ ...this.store$.value, filters });
+    this.store$.next({ ...this.store$.value, filters: { ...this.store$.value.filters, ...filters } });
   }
 
   setSorting(sorting: StickerPackSorting): void {
@@ -69,7 +69,12 @@ export class StickerPackService {
     this.refreshSubject$.next();
   }
 
-  private getAllStickerPacks$(
+  getAllStickerPacks$(): Observable<PaginatedData<StickerPackOutput>> {
+    return this.http
+      .get<PaginatedData<StickerPackOutput>>(`stickers`);
+  }
+
+  getStickerPacks$(
     filters: StickerPackFilters,
     sorting: StickerPackSorting,
     pagination: Pagination
@@ -80,7 +85,10 @@ export class StickerPackService {
 
     return this.http
       .get<PaginatedData<StickerPackOutput>>(`stickers${queryParams}`)
-      .pipe(finalize(() => this.loading$.next(false)));
+      .pipe(
+        delay(1000),
+        finalize(() => this.loading$.next(false))
+      );
   }
 
   private static filtersToQueryParams(
@@ -104,7 +112,7 @@ export class StickerPackService {
 
       const value = paramsObject[property];
 
-      // Не изменять проверку на !value. Т.е. значения с 0 или пустые строки тоже будут отфильтровываться
+      // Не изменять проверку на !value. Т.к. значения с 0 или пустые строки тоже будут отфильтровываться
       if (null !== value && undefined !== value) {
         params.push({ key: property, value: String(value) });
       }
@@ -112,8 +120,7 @@ export class StickerPackService {
 
     if (filters.tagsFilter) {
       params.push(
-        ...filters.tagsFilter.tagsIds
-          .map(tagId => ({ key: 'tagId', value: tagId }))
+        ...filters.tagsFilter.tagIds.map(tagId => ({ key: 'tagIds', value: tagId }))
       );
     }
 
@@ -151,7 +158,7 @@ export interface StickerPackFilters {
     clapsSearchType: SearchType
   },
   tagsFilter?: {
-    tagsIds: Guid[]
+    tagIds: Guid[]
   }
 }
 

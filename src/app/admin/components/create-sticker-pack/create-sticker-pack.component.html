@@ -2,7 +2,7 @@
   <div nz-col nzOffset="8" nzSpan="8">
     <form nz-form class="sticker-pack-form" [formGroup]="stickerPackForm">
       <nz-form-item>
-        <h3>Создание стикер пака</h3>
+        <h3>Добавить стикер пака</h3>
       </nz-form-item>
 
       <nz-form-item>
@@ -35,28 +35,35 @@
         <nz-form-control>
           <nz-input-group>
             <nz-select
-              *ngIf="tags.length && !tagsLoading"
-              nzSize="large"
-              nzPlaceHolder="Тэги"
+              *ngIf="(tagService.total$ | async) || (tagService.loading$ | async)"
+              [nzLoading]="tagService.loading$ | async"
+              formControlName="tagIds"
               nzMode="multiple"
+              nzPlaceHolder="Тэги"
+              nzSize="large"
               style="width: 100%">
 
               <nz-option
-                *ngFor="let tag of tags"
+                *ngFor="let tag of tagService.tags$ | async"
                 [nzLabel]="tag.name"
-                [nzValue]="tag.name">
+                [nzValue]="tag.id">
               </nz-option>
             </nz-select>
 
-            <div *ngIf="tagsLoading" style="text-align: center;">
-              <nz-spin nzSimple></nz-spin>
-            </div>
-
-            <nz-empty *ngIf="!tags.length && !tagsLoading" nzNotFoundContent="Не найдено тэгов"></nz-empty>
+            <nz-empty *ngIf="!(tagService.total$) && !(tagService.loading$ | async)"
+                      nzNotFoundContent="Не найдено тэгов"></nz-empty>
           </nz-input-group>
         </nz-form-control>
+      </nz-form-item>
 
-        <button (click)="submit()" [nzLoading]="loading" nz-button nzBlock nzSize="large" nzType="primary">Создать
+      <nz-form-item>
+        <button (click)="submit()"
+                [nzLoading]="loading"
+                nz-button
+                nzBlock
+                nzSize="large"
+                nzType="primary">
+          Добавить
         </button>
       </nz-form-item>
 

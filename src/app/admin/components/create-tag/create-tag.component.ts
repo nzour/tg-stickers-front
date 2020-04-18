@@ -36,7 +36,7 @@ export class CreateTagComponent {
 
     // todo: переделать проверку уникальности названия на асинхронную валидацию
     this.tagService
-      .isTagNameBusy(name)
+      .isTagNameBusy$(name)
       .pipe(
         map(() => false),
         catchError(() => {

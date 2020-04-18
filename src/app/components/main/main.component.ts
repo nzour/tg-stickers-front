@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Guid } from '../../shared/types';
 
 @Component({
   selector: 'app-main',
@@ -9,9 +8,5 @@ import { Guid } from '../../shared/types';
 export class MainComponent {
 
   constructor() { }
-
-  log(values: Guid[]) {
-    console.log(values);
-  }
 
 }
