@@ -23,51 +23,54 @@
       </nz-page-header-footer>
     </nz-page-header>
 
-    <div style="padding:30px;">
-      <div *ngFor="let stickerPack of stickerPackService.stickerPacks$ | async" nzGutter="8" nz-row>
-        <div nz-col nzSpan="6">
+    <div nz-row nzGutter="130">
+      <div *ngFor="let stickerPack of stickerPackService.stickerPacks$ | async" nz-col nzSpan="6" style="height: 450px">
+        <nz-card [nzActions]="[actionShare, actionClap]" [nzCover]="cover">
+          <nz-card-meta
+            [nzTitle]="stickerPack.name"
+            [nzDescription]="description">
+          </nz-card-meta>
+        </nz-card>
 
-          <nz-card [nzActions]="[actionShare, actionClap]" [nzCover]="cover">
-            <nz-card-meta
-              [nzTitle]="stickerPack.name"
-              [nzDescription]="description">
-            </nz-card-meta>
-          </nz-card>
+        <ng-template #description>
+          <div>
+            Добавлен {{ stickerPack.createdBy.name }}, {{ stickerPack.createdAt | date }}
+          </div>
 
-          <ng-template #description>
-            <div>
-              Добавлен {{ stickerPack.createdBy.name }}, {{ stickerPack.createdAt | date }}
-            </div>
+          <div>
+            <nz-tag *ngFor="let tag of stickerPack.tags">
+              {{ tag.name }}
+            </nz-tag>
+          </div>
 
-            <div>
-              <nz-tag *ngFor="let tag of stickerPack.tags">
-                {{ tag.name }}
-              </nz-tag>
-            </div>
+          <div>Рейтинг: {{ stickerPack.claps }}</div>
+        </ng-template>
 
-            <div>Рейтинг: {{ stickerPack.claps }}</div>
-          </ng-template>
+        <ng-template #cover>
+          <img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+               style="height: 170px"/>
+        </ng-template>
 
-          <ng-template #cover>
-            <img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"/>
-          </ng-template>
+        <ng-template #actionShare>
+          <i nz-icon nzType="link" nzTheme="outline"></i>
+        </ng-template>
 
-          <ng-template #actionShare>
-            <i nz-icon nzType="link" nzTheme="outline"></i>
-          </ng-template>
-
-          <ng-template #actionClap>
+        <ng-template #actionClap>
+          <div (click)="bufferClap(stickerPack.id)" style="user-select: none">
             <fa-icon [icon]="faThumbsUp" style="user-select: none"></fa-icon>
-            <span style="padding-left: 5px; user-select: none"></span>
-          </ng-template>
 
-        </div>
+            <span style="padding-left: 5px; user-select: none">
+            {{ getBufferedClapsForStickerPack(stickerPack.id) }}
+          </span>
+          </div>
+        </ng-template>
+
       </div>
     </div>
+  </div>
 
-    <div *ngIf="!(stickerPackService.total$ | async) && !(this.stickerPackService.loading$ | async)"
-         style="text-align: center">
-      <nz-empty nzNotFoundContent="Ничего не найдено"></nz-empty>
-    </div>
+  <div *ngIf="!(stickerPackService.total$ | async) && !(this.stickerPackService.loading$ | async)"
+       style="text-align: center">
+    <nz-empty nzNotFoundContent="Ничего не найдено"></nz-empty>
   </div>
 </div>

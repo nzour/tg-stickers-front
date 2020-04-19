@@ -3,7 +3,7 @@ import { AdminOutput, Guid, PaginatedData, Pagination, SearchType, SortType, Tim
 import { TagOutput } from './tag.service';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { delay, distinctUntilChanged, finalize, map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, finalize, map, switchMap } from 'rxjs/operators';
 
 
 const _initialState: StickerPackState = {
@@ -48,9 +48,8 @@ export class StickerPackService {
       .pipe(finalize(this.refreshStickers));
   }
 
-  increaseClapsAndRefreshStickers(stickerPackId: Guid, clapsToAdd: number): void {
-    this.http.post(`stickers${stickerPackId}`, { clapsToAdd })
-      .subscribe(this.refreshStickers);
+  increaseClaps(clapsInput: Array<{ stickerPackId: Guid, clapsToAdd: number }>): Observable<void> {
+    return this.http.patch<void>(`stickers/claps`, { clapsInput });
   }
 
   setFilters(filters: StickerPackFilters): void {
@@ -86,7 +85,6 @@ export class StickerPackService {
     return this.http
       .get<PaginatedData<StickerPackOutput>>(`stickers${queryParams}`)
       .pipe(
-        delay(1000),
         finalize(() => this.loading$.next(false))
       );
   }

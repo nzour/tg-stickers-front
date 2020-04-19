@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Guid, PaginatedData, Pagination, SearchType } from '../types';
-import { delay, finalize, map, switchMap } from 'rxjs/operators';
+import { finalize, map, switchMap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 
 @Injectable()
@@ -29,7 +29,6 @@ export class TagService {
 
     return this.http.get<PaginatedData<TagOutput>>('tags')
       .pipe(
-        delay(1000),
         finalize(() => this.loading$.next(false))
       );
   }
