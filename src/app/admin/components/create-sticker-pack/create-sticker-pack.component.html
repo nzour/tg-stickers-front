@@ -6,27 +6,27 @@
       </nz-form-item>
 
       <nz-form-item>
-        <nz-form-control nzErrorTip="Обязательное поле">
+        <nz-form-control nzErrorTip="Стикер пак должен существовать">
           <nz-input-group>
             <input
               nz-input
               nzSize="large"
               type="text"
               formControlName="name"
-              placeholder="Название стикерпака"/>
+              placeholder="Название стикер пака"/>
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
-        <nz-form-control nzErrorTip="Должен быть валидный url путь до стикер пака">
+        <nz-form-control>
           <nz-input-group>
             <input
               nz-input
               nzSize="large"
               type="text"
-              formControlName="sharedUrl"
-              placeholder="Ссылка на стикерпак"/>
+              formControlName="alias"
+              placeholder="Алиас для отображения (опционально)"/>
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
@@ -39,6 +39,7 @@
               [nzLoading]="tagService.loading$ | async"
               formControlName="tagIds"
               nzMode="multiple"
+              nzNotFoundContent="Ничего не найдено"
               nzPlaceHolder="Тэги"
               nzSize="large"
               style="width: 100%">
@@ -50,7 +51,7 @@
               </nz-option>
             </nz-select>
 
-            <nz-empty *ngIf="!(tagService.total$) && !(tagService.loading$ | async)"
+            <nz-empty *ngIf="!(tagService.total$ | async) && !(tagService.loading$ | async)"
                       nzNotFoundContent="Не найдено тэгов"></nz-empty>
           </nz-input-group>
         </nz-form-control>

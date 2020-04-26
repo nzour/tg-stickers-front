@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AdminOutput, Guid, PaginatedData, Pagination, SearchType, SortType, Timestamp } from '../types';
 import { TagOutput } from './tag.service';
-import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { distinctUntilChanged, finalize, map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, distinctUntilChanged, finalize, map, switchMap } from 'rxjs/operators';
 
 
 const _initialState: StickerPackState = {
@@ -89,6 +89,20 @@ export class StickerPackService {
       );
   }
 
+  isStickerPackExists$(name: string): Observable<boolean> {
+    return this.http.head<void>(`stickers/${name}/exists`)
+      .pipe(
+        map(() => true),
+        catchError(err => {
+          if (err instanceof HttpErrorResponse && err.status === 404) {
+            return of(false);
+          }
+
+          throw err;
+        })
+      );
+  }
+
   private static filtersToQueryParams(
     filters: StickerPackFilters,
     sorting: StickerPackSorting,
@@ -139,11 +153,13 @@ export interface StickerPackState {
 export interface StickerPackOutput {
   id: Guid,
   name: string,
-  sharedUrl: string,
+  alias: string | null,
   claps: number,
   createdAt: Timestamp,
   createdBy: AdminOutput,
   tags: TagOutput[]
+  firstStickerPath: string,
+  stickersCount: number
 }
 
 export interface StickerPackFilters {
@@ -169,6 +185,6 @@ export interface StickerPackSorting {
 
 export interface StickerPackInput {
   name: string,
-  sharedUrl: string,
+  alias: string | null,
   tagIds: Guid[]
 }

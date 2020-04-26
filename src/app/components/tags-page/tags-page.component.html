@@ -22,10 +22,11 @@
       <nz-page-header-content>
         <nz-input-group *ngIf="(tagService.total$ | async) || (tagService.loading$ | async)">
           <nz-select
-            nzPlaceHolder="Тэги"
-            nzMode="multiple"
-            [nzLoading]="tagService.loading$ | async"
             [formControl]="selectedTagsControl"
+            [nzLoading]="tagService.loading$ | async"
+            nzMode="multiple"
+            nzNotFoundContent="Ничего не найдено"
+            nzPlaceHolder="Тэги"
             style="width: 100%">
 
             <nz-option *ngFor="let tag of tagService.tags$ | async" [nzLabel]="tag.name" [nzValue]="tag.id"></nz-option>

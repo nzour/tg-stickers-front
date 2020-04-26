@@ -1,14 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd';
-import { catchError, finalize } from 'rxjs/operators';
+import { catchError, finalize, map } from 'rxjs/operators';
 import { TagOutput, TagService } from 'src/app/shared/services/tag.service';
 import { isHandledError } from 'src/app/shared/types';
 import { StickerPackService } from '../../../shared/services/sticker-pack.service';
-
-const URL_REGEX_PATTERN = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm;
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-create-sticker-pack',
@@ -21,8 +20,8 @@ export class CreateStickerPackComponent implements OnInit {
   loading = false;
 
   stickerPackForm = new FormGroup({
-    name: new FormControl('', [Validators.required]),
-    sharedUrl: new FormControl('', [Validators.required, Validators.pattern(URL_REGEX_PATTERN)]),
+    name: new FormControl('', [Validators.required], this.assertStickerPackWithNameExists.bind(this)),
+    alias: new FormControl(null),
     tagIds: new FormControl([])
   });
 
@@ -62,5 +61,12 @@ export class CreateStickerPackComponent implements OnInit {
     }
 
     this.messageService.error('Возникла непредвиденная ошибка!');
+  }
+
+  private assertStickerPackWithNameExists(control: AbstractControl): Observable<null | { stickerPackDoesNotExist: true }> {
+    return this.stickerPackService.isStickerPackExists$(control.value ?? '')
+      .pipe(
+        map(isExists => isExists ? null : { stickerPackDoesNotExist: true })
+      );
   }
 }

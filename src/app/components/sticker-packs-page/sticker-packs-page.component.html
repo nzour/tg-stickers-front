@@ -27,7 +27,7 @@
       <div *ngFor="let stickerPack of stickerPackService.stickerPacks$ | async" nz-col nzSpan="6" style="height: 450px">
         <nz-card [nzActions]="[actionShare, actionClap]" [nzCover]="cover">
           <nz-card-meta
-            [nzTitle]="stickerPack.name"
+            [nzTitle]="formatStickerPackTitle(stickerPack)"
             [nzDescription]="description">
           </nz-card-meta>
         </nz-card>
@@ -47,8 +47,7 @@
         </ng-template>
 
         <ng-template #cover>
-          <img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-               style="height: 170px"/>
+          <img alt="example" [src]="stickerPack.firstStickerPath | loadFile" style="height: 170px"/>
         </ng-template>
 
         <ng-template #actionShare>

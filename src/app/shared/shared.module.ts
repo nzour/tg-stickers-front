@@ -7,8 +7,9 @@ import { TagService } from './services/tag.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { RouterModule } from '@angular/router';
-import { IfAdminDirective } from './directives/if-admin.directive';
 import { StickerPackService } from './services/sticker-pack.service';
+import { IfAdminDirective } from './utilities/if-admin.directive';
+import { LoadFilePipe } from './utilities/load-file.pipe';
 
 
 const services = [
@@ -28,11 +29,12 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [IfAdminDirective],
+  declarations: [IfAdminDirective, LoadFilePipe],
   imports: modules,
   exports: [
     modules,
-    IfAdminDirective
+    IfAdminDirective,
+    LoadFilePipe
   ],
   providers: [
     {

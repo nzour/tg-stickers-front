@@ -44,14 +44,18 @@ export class StickerPacksPageComponent implements OnInit {
   }
 
   getBufferedClapsForStickerPack(stickerPackId: Guid): string {
-    return String(this._stickerClapsBuffer.get(stickerPackId) || '');
+    return String(this._stickerClapsBuffer.get(stickerPackId) ?? '');
   }
 
   bufferClap(stickerPackId: Guid): void {
-    const currentClaps = this._stickerClapsBuffer.get(stickerPackId) || 0;
+    const currentClaps = this._stickerClapsBuffer.get(stickerPackId) ?? 0;
 
     this._stickerClapsBuffer.set(stickerPackId, currentClaps + 1);
 
     this._clapsSubject$.next(stickerPackId);
+  }
+
+  formatStickerPackTitle({ name, alias }: { name: string, alias: string | null }): string {
+    return alias ? `${alias} (${name})` : name;
   }
 }
