@@ -12,6 +12,7 @@ import { MainComponent } from './components/main/main.component';
 import { TagsPageComponent } from './components/tags-page/tags-page.component';
 import { StickerPacksPageComponent } from './components/sticker-packs-page/sticker-packs-page.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { StickerPackSinglePageComponent } from './components/sticker-pack-single-page/sticker-pack-single-page.component';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     LogInFormComponent,
     MainComponent,
     TagsPageComponent,
-    StickerPacksPageComponent
+    StickerPacksPageComponent,
+    StickerPackSinglePageComponent
   ],
   imports: [
     BrowserModule,

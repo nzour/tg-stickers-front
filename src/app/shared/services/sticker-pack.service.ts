@@ -103,6 +103,10 @@ export class StickerPackService {
       );
   }
 
+  getStickerPackImages$(stickerPackId: Guid): Observable<string[]> {
+    return this.http.get<string[]>(`stickers/${stickerPackId}/images`);
+  }
+
   private static filtersToQueryParams(
     filters: StickerPackFilters,
     sorting: StickerPackSorting,

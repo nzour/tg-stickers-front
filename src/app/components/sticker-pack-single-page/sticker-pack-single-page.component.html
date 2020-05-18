@@ -1,0 +1,19 @@
+<div nz-row>
+  <div nz-col nzOffset="2" nzSpan="20">
+
+    <div *ngIf="stickerPack">
+      <h4>{{ stickerPack.alias || stickerPack.alias }}</h4>
+    </div>
+
+    <div nz-row nzGutter="130" *ngIf="stickerPack">
+      <div *ngFor="let stickerImage of stickerPack.images" nz-col nzSpan="4" style="height: 450px">
+        <img alt="example" [src]="stickerImage | loadFile" style="height: 200px"/>
+      </div>
+    </div>
+  </div>
+
+  <!--  <div *ngIf="!(stickerPackService.total$ | async) && !(this.stickerPackService.loading$ | async)"-->
+  <!--       style="text-align: center">-->
+  <!--    <nz-empty nzNotFoundContent="Ничего не найдено"></nz-empty>-->
+  <!--  </div>-->
+</div>
