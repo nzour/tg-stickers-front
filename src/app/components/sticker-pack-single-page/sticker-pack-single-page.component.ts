@@ -17,13 +17,13 @@ export class StickerPackSinglePageComponent implements OnDestroy {
   stickerPack?: StickerPackWithImagesOutput;
 
   constructor(
-    private stickerPackService: StickerPackService,
     private activatedRoute: ActivatedRoute,
-    private messageService: NzMessageService
+    private messageService: NzMessageService,
+    stickerPackService: StickerPackService
   ) {
     this._subscription = activatedRoute.paramMap
       .pipe(
-        map(this.stickerPackIdFromParams),
+        map(this.extractStickerPackIdFromParams),
         switchMap(stickerPackId => this.resolveStickerPackInfo$(stickerPackService, stickerPackId))
       )
       .subscribe(stickerPack => this.stickerPack = stickerPack);
@@ -33,7 +33,7 @@ export class StickerPackSinglePageComponent implements OnDestroy {
     this._subscription?.unsubscribe();
   }
 
-  private stickerPackIdFromParams(params: Params): Guid {
+  private extractStickerPackIdFromParams(params: Params): Guid {
     const stickerPackId = params.get('stickerPackId');
 
     if (!stickerPackId) {
@@ -45,22 +45,16 @@ export class StickerPackSinglePageComponent implements OnDestroy {
   }
 
   private resolveStickerPackInfo$(stickerPackService: StickerPackService, stickerPackId: Guid): Observable<StickerPackWithImagesOutput> {
-    const getStickerPack = () => {
-      return stickerPackService.stickerPacks$
-        .pipe(
-          mergeAll(),
-          first(stickerPack => stickerPack.id === stickerPackId)
-        );
-    };
+    const stickerPackSource$ = stickerPackService.stickerPacks$
+      .pipe(
+        mergeAll(),
+        first(stickerPack => stickerPack.id === stickerPackId),
+      );
 
-    const toFullOutput = ([images, stickerPack]: [string[], StickerPackOutput]) => ({ ...stickerPack!, images });
+    const imagesSource$ = stickerPackService.getStickerPackImages$(stickerPackId);
 
-    const sources: [Observable<string[]>, Observable<StickerPackOutput>] = [
-      stickerPackService.getStickerPackImages$(stickerPackId),
-      getStickerPack()
-    ];
-
-    return combineLatest(sources).pipe(map(toFullOutput));
+    return combineLatest([stickerPackSource$, imagesSource$])
+      .pipe(map(([pack, images]) => ({ ...pack, images })));
   }
 }
 
