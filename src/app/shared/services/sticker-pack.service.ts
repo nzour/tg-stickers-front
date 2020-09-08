@@ -68,9 +68,8 @@ export class StickerPackService {
     this.refreshSubject$.next();
   }
 
-  getAllStickerPacks$(): Observable<PaginatedData<StickerPackOutput>> {
-    return this.http
-      .get<PaginatedData<StickerPackOutput>>(`stickers`);
+  getStickerPackById(id: Guid): Observable<StickerPackOutput> {
+    return this.http.get<StickerPackOutput>(`stickers/${id}`);
   }
 
   getStickerPacks$(
@@ -105,6 +104,10 @@ export class StickerPackService {
 
   getStickerPackImages$(stickerPackId: Guid): Observable<string[]> {
     return this.http.get<string[]>(`stickers/${stickerPackId}/images`);
+  }
+
+  async sendStickerPackToTelegram(input: SendStickerPackInput): Promise<void> {
+    await this.http.post('stickers/send', input).toPromise();
   }
 
   private static filtersToQueryParams(
@@ -192,3 +195,9 @@ export interface StickerPackInput {
   alias: string | null,
   tagIds: Guid[]
 }
+
+export interface SendStickerPackInput {
+  tgUsername: string,
+  stickerPackName: string
+}
+

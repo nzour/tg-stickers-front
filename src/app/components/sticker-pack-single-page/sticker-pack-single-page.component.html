@@ -1,19 +1,125 @@
 <div nz-row>
   <div nz-col nzOffset="2" nzSpan="20">
 
-    <div *ngIf="stickerPack">
-      <h4>{{ stickerPack.alias || stickerPack.alias }}</h4>
+    <div *ngIf="stickerPack" nz-row nzGutter="100" class="description">
+      <div nz-col [nzSm]="5">
+        <nz-list [nzHeader]="stickerPack.name">
+          <nz-list-item *ngIf="stickerPack.alias">
+            <span><mark>Алиас</mark></span>
+            {{ stickerPack.alias }}
+          </nz-list-item>
+
+          <nz-list-item>
+            <span><mark>Рейтинг</mark></span>
+            {{ stickerPack.claps }}
+          </nz-list-item>
+
+          <nz-list-item>
+            <span><mark>Стикеров</mark></span>
+            {{ stickerPack.stickersCount }}
+          </nz-list-item>
+        </nz-list>
+      </div>
+
+      <div nz-col [nzSm]="5">
+        <nz-list nzHeader="Создан">
+          <nz-list-item>
+            <span><mark>Кем</mark></span>
+            {{ stickerPack.createdBy.name }}
+
+            <ng-template appIfAdmin>
+              ({{ stickerPack.createdBy.login }})
+            </ng-template>
+          </nz-list-item>
+
+          <nz-list-item>
+            <span><mark>Когда</mark></span>
+            {{ stickerPack.createdAt | formatDate }}
+          </nz-list-item>
+        </nz-list>
+      </div>
+
+      <div nz-col [nzSm]="5">
+        <nz-list nzHeader="Действия">
+          <nz-list-item class="actions">
+            <div (click)="copyLinkToClipboard()" nz-tooltip nzTooltipTitle="Скопировать ссылку">
+              <i nz-icon nzType="copy" nzTheme="outline"></i>
+            </div>
+
+            <div (click)="isSendToTgModalVisible = true" nz-tooltip nzTooltipTitle="Прислать Telegram ботом">
+              <i nz-icon nzType="robot" nzTheme="outline"></i>
+            </div>
+
+            <div nz-tooltip nzTooltipTitle="Донат временно недоступен" class="disabled">
+              <i nz-icon nzType="dollar" nzTheme="outline"></i>
+            </div>
+          </nz-list-item>
+        </nz-list>
+      </div>
     </div>
 
-    <div nz-row nzGutter="130" *ngIf="stickerPack">
-      <div *ngFor="let stickerImage of stickerPack.images" nz-col nzSpan="4" style="height: 450px">
-        <img alt="example" [src]="stickerImage | loadFile" style="height: 200px"/>
-      </div>
+    <div class="w-100 p-10" *ngIf="stickerPack && stickerPack.tags.length">
+      <b>Тэги</b>:
+      <nz-tag *ngFor="let tag of stickerPack.tags">
+        {{ tag.name }}
+      </nz-tag>
+    </div>
+
+    <nz-divider *ngIf="stickerPack"></nz-divider>
+
+    <div *ngIf="stickerPack" class="grid">
+      <img
+        (click)="pickImage(stickerImage)"
+        *ngFor="let stickerImage of stickerPack.images"
+        [src]="stickerImage | loadFile"
+      />
     </div>
   </div>
 
-  <!--  <div *ngIf="!(stickerPackService.total$ | async) && !(this.stickerPackService.loading$ | async)"-->
-  <!--       style="text-align: center">-->
-  <!--    <nz-empty nzNotFoundContent="Ничего не найдено"></nz-empty>-->
-  <!--  </div>-->
+  <div *ngIf="isLoading" class="w-100 p-10 text-center">
+    <nz-spin nzSize="large" nzSimple></nz-spin>
+  </div>
+
+  <div *ngIf="!isLoading && !stickerPack" class="w-100 p-10 text-center">
+    <nz-empty nzNotFoundContent="Произошла ошибка. Данные не найдены"></nz-empty>
+  </div>
+
+  <nz-modal
+    (nzOnCancel)="isModalVisible = false"
+    [(nzVisible)]="!!pickedImage && isModalVisible"
+  >
+    <img [src]="pickedImage! | loadFile" class="w-100 p-10">
+
+    <div *nzModalFooter>
+      <!--   Чтобы footer был пустым   -->
+    </div>
+  </nz-modal>
+
+  <nz-modal
+    (nzOnCancel)="isSendToTgModalVisible = false"
+    [(nzVisible)]="stickerPack && isSendToTgModalVisible"
+  >
+    <div class="w-100 p-10 text-center">
+      <div>
+        <h4>
+          <i nz-icon nzType="info-circle" nzTheme="outline"></i>
+          Необходимо, чтобы бот имел доступ к чату с вами.
+        </h4>
+        <h4>
+          Для этого найдите его в Telegram
+          (<a href="https://t.me/ZoborTestBot" class="blue" target="_blank">@ZoborTestBot</a>)
+          и напишите
+          <span class="blue">/start</span>
+        </h4>
+      </div>
+    </div>
+
+    <nz-input-group nzAddOnBefore="@" class="p-10">
+      <input type="text" nz-input [(ngModel)]="username" placeholder="Ваш username в Telegram">
+    </nz-input-group>
+
+    <div *nzModalFooter class="text-center">
+      <button nz-button (click)="confirmSendToTelegram()">Подтвердить</button>
+    </div>
+  </nz-modal>
 </div>

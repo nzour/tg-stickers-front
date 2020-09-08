@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { StickerPackService } from './services/sticker-pack.service';
 import { IfAdminDirective } from './utilities/if-admin.directive';
 import { LoadFilePipe } from './utilities/load-file.pipe';
+import { FormatDatePipe } from './utilities/format-date.pipe';
 
 
 const services = [
@@ -29,12 +30,13 @@ const modules = [
 ];
 
 @NgModule({
-  declarations: [IfAdminDirective, LoadFilePipe],
+  declarations: [IfAdminDirective, LoadFilePipe, FormatDatePipe],
   imports: modules,
   exports: [
     modules,
     IfAdminDirective,
-    LoadFilePipe
+    LoadFilePipe,
+    FormatDatePipe
   ],
   providers: [
     {
